@@ -1,36 +1,82 @@
-import React, { useState, useReducer } from "react";
+import React, { useReducer } from "react";
 import ReactDOM from "react-dom";
 
-const initial = {
-  n: 1,
+const initFormData = {
+  name: "",
+  age: 18,
+  nationality: "汉族",
 };
 
 const reducer = (state, action) => {
-  if (action.type === "add") {
-    return { n: state.n + action.number };
-  } else if (action.type === "multiply") {
-    return { n: state.n * 2 };
-  } else {
-    throw new Error("unknown type");
+  switch (action.type) {
+    case "patch":
+      return { ...state, ...action.initFormData };
+    case "reset":
+      return initFormData;
+    default:
+      throw new Error();
   }
 };
 
-const App = () => {
-  const [state, dispatch] = useReducer(reducer, initial);
-  const { n } = state;
-  const onClick = () => {
-    dispatch({ type: "add", number: 1 });
-  };
-  const onClick2 = () => {
-    dispatch({ type: "add", number: 2 });
+function App() {
+  console.log("aaa");
+  const [formData, dispatch] = useReducer(reducer, initFormData);
+  const onSubmit = () => {};
+  const onReset = () => {
+    dispatch({ type: "reset" });
   };
   return (
-    <div>
-      <h1>n: {n}</h1>
-      <button onClick={onClick}> + 1</button>
-      <button onClick={onClick2}> + 2</button>
-    </div>
+    <form onSubmit={onSubmit} onReset={onReset}>
+      <div>
+        <label>
+          姓名
+          <input
+            defaultValue={formData.name}
+            onChange={(e) =>
+              dispatch({
+                type: "patch",
+                formData: { name: e.target.value },
+              })
+            }
+          />
+        </label>
+      </div>
+      <div>
+        <label>
+          年龄
+          <input
+            defaultValue={formData.age}
+            onChange={(e) =>
+              dispatch({
+                type: "reset",
+                formData: { age: e.target.name },
+              })
+            }
+          />
+        </label>
+      </div>
+      <div>
+        <label>
+          民族
+          <input
+            defaultValue={formData.nationality}
+            onChange={(e) =>
+              dispatch({
+                type: "patch",
+                formData: { nationality: e.target.value },
+              })
+            }
+          />
+        </label>
+      </div>
+      <div>
+        <button type="submit">提交</button>
+        <button type="reset">重置</button>
+      </div>
+      <hr />
+      {JSON.stringify(formData)}
+    </form>
   );
-};
+}
 
 ReactDOM.render(<App />, document.getElementById("root"));
