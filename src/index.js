@@ -10,7 +10,7 @@ const initFormData = {
 const reducer = (state, action) => {
   switch (action.type) {
     case "patch":
-      return { ...state, ...action.initFormData };
+      return { ...state, ...action.formData };
     case "reset":
       return initFormData;
     default:
@@ -18,7 +18,8 @@ const reducer = (state, action) => {
   }
 };
 
-function App() {
+
+const App = () => {
   console.log("aaa");
   const [formData, dispatch] = useReducer(reducer, initFormData);
   const onSubmit = () => {};
@@ -31,7 +32,7 @@ function App() {
         <label>
           姓名
           <input
-            defaultValue={formData.name}
+            value={formData.name}
             onChange={(e) =>
               dispatch({
                 type: "patch",
@@ -45,7 +46,7 @@ function App() {
         <label>
           年龄
           <input
-            defaultValue={formData.age}
+            value={formData.age}
             onChange={(e) =>
               dispatch({
                 type: "reset",
@@ -59,7 +60,7 @@ function App() {
         <label>
           民族
           <input
-            defaultValue={formData.nationality}
+            value={formData.nationality}
             onChange={(e) =>
               dispatch({
                 type: "patch",
@@ -77,6 +78,6 @@ function App() {
       {JSON.stringify(formData)}
     </form>
   );
-}
+};
 
 ReactDOM.render(<App />, document.getElementById("root"));
