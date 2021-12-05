@@ -51,7 +51,6 @@ const App = () => {
       <User />
       <hr />
       <Books />
-      <hr />
       <Movies />
     </Context.Provider>
   );

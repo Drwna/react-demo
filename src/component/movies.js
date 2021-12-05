@@ -14,7 +14,6 @@ const Movies = () => {
     <div>
       <h1>我的电影</h1>
       <ol>
-        {" "}
         {state.movies
           ? state.movies.map((movies) => <li key={movies.id}>{movies.name}</li>)
           : "加载中"}

@@ -1,5 +1,5 @@
 const booksReducer = {
-  setBook: (state, action) => {
+  setBooks: (state, action) => {
     return { ...state, books: action.books };
   },
   deleteBook: () => {},

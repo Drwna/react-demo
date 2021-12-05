@@ -1,4 +1,3 @@
-// 帮助函数
 // 假 ajax
 // 两秒钟后，根据 path 返回一个对象，必定成功不会失败
 function ajax(path) {
