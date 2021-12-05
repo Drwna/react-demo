@@ -1,59 +1,40 @@
-import React, { useReducer } from "react";
+import React, { createContext, useContext, useState } from "react";
 import ReactDOM from "react-dom";
-import Context from "./Context.js";
-import User from "./component/user.js";
-import Books from "./component/books.js";
-import Movies from "./component/movies.js";
-import userReducer from "./reducer/user_reducer.js";
-import booksReducer from "./reducer/books_reducer.js";
-import moviesReducer from "./reducer/movies_reducer.js";
 
-const store = {
-  user: null,
-  books: null,
-  movies: null,
-};
-
-const obj = {
-  ...userReducer,
-  ...booksReducer,
-  ...moviesReducer
-};
-
-function reducer(state, action) {
-  const fn = obj[action.type];
-  if (fn) {
-    return fn(state, action);
-  } else {
-    console.error("wrong type");
-  }
-}
-
-// function reducer(state, action) {
-//   switch (action.type) {
-//     case "setUser":
-//       return { ...state, user: action.user };
-//     case "setBooks":
-//       return { ...state, books: action.books };
-//     case "setMovies":
-//       return { ...state, movies: action.movies };
-//     default:
-//       throw new Error();
-//   }
-// }
-
+const C = createContext(null);
 
 const App = () => {
-  const [state, dispatch] = useReducer(reducer, store);
-
+  const [n, setN] = useState(0);
   return (
-    <Context.Provider value={{ state, dispatch }}>
-      <User />
-      <hr />
-      <Books />
-      <Movies />
-    </Context.Provider>
+    <C.Provider value={{ n, setN }}>
+      <div className="App">
+        <h1>useContext</h1>
+        <Baba />
+      </div>
+    </C.Provider>
   );
 };
+
+function Baba() {
+  return (
+    <div>
+      我是爸爸
+      <Child />
+    </div>
+  );
+}
+
+function Child() {
+  const { n, setN } = useContext(C);
+  const onClick = () => {
+    setN((i) => i + 1);
+  };
+  return (
+    <div>
+      我是儿子，我得到的 n: {n}
+      <button onClick={onClick}>+1</button>
+    </div>
+  );
+}
 
 ReactDOM.render(<App />, document.getElementById("root"));
