@@ -1,36 +1,32 @@
-import React, { useRef, useState } from "react";
+import React, { forwardRef, useRef } from "react";
 import ReactDOM from "react-dom";
-import { useEffect } from "react/cjs/react.development";
 
-// 需要知道 App 执行了几次
 const App = () => {
-  console.log("App执行了");
-  const count = useRef(0);
-  const [n, setN] = useState(0);
-  const [_, set_] = useState(null);
-  const onClick = () => {
-    setN((i) => i + 1);
-  };
-  const onClick2 = () => {
-    count.current += 1;
-    // 为了更新 ui
-    set_(Math.random());
-    console.log(count.current);
-  };
-  useEffect(() => {
-    count.current += 1;
-    console.log("App执行了", count.current, "次");
-  });
+  const buttonRef = useRef(null);
+  console.log("buttonRef", buttonRef);
   return (
     <div>
-      <h1>React.useRef</h1>
+      <h1>React.forwardRef</h1>
       <hr />
       <div>
-        <button onClick={onClick}>update n :{n}</button>
-        <button onClick={onClick2}>update count:{count.current}</button>
+        <Button3 ref={buttonRef}>button</Button3>
       </div>
     </div>
   );
 };
+
+const Button2 = (props, ref) => {
+  console.log(props);
+  console.log(ref);
+  return <button className="red" ref={ref} {...props} />;
+};
+
+const Button3 = forwardRef(Button2);
+
+// const Button4 = forwardRef((props, ref) => {
+//   console.log(props);
+//   console.log(ref);
+//   return <button className="red" ref={ref} {...props} />;
+// });
 
 ReactDOM.render(<App />, document.getElementById("root"));
