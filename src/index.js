@@ -1,60 +1,48 @@
-import React, { forwardRef, useRef, useState, useEffect } from "react";
+import React, {
+  useState,
+  useImperativeHandle,
+  useRef,
+  forwardRef,
+} from "react";
 import ReactDOM from "react-dom";
 
-function App() {
-  const MovableButton = movable(Button2);
-  const buttonRef = useRef(null);
-  useEffect(() => {
-    console.log("buttonRef.current: ", buttonRef.current);
-  });
+// 子组件
+const ChildComponent = forwardRef((props, ref) => {
+  const [count, setCount] = useState(0); //子组件定义内部变量count
+  //子组件定义内部函数 addCount
+  const addCount = () => {
+    setCount(count + 1);
+  };
+  //子组件通过useImperativeHandle函数，将addCount函数添加到父组件中的ref.current中
+  useImperativeHandle(ref, () => ({ addCount }));
   return (
-    <div className="App">
-      <MovableButton name="email" ref={buttonRef}>
-        按钮
-      </MovableButton>
+    <div>
+      {count}
+      <button onClick={addCount}>child</button>
+    </div>
+  );
+});
+
+// 父组件
+function Imperative() {
+  const childRef = useRef(null); //父组件定义一个对子组件的引用
+
+  const clickHandle = () => {
+    childRef.current.addCount(); //父组件调用子组件内部 addCount函数
+  };
+
+  return (
+    <div>
+      {/* 父组件通过给子组件添加 ref 属性，将childRef传递给子组件，
+            子组件获得该引用即可将内部函数添加到childRef中 */}
+      <ChildComponent ref={childRef} />
+      <button onClick={clickHandle}>child component do something</button>
     </div>
   );
 }
 
-// 原地址: https://codesandbox.io/s/amazing-snow-9f5g3
-
-const Button2 = forwardRef((props, ref) => {
-  return <button ref={ref} {...props} />;
-});
-
-// 仅用于实验目的，不要在公司代码中使用
-function movable(Component) {
-  function Component2(props, ref) {
-    console.log(props, ref);
-    const [position, setPosition] = useState([0, 0]);
-    const lastPosition = useRef(null);
-    const onMouseDown = (e) => {
-      lastPosition.current = [e.clientX, e.clientY];
-    };
-    const onMouseMove = (e) => {
-      if (lastPosition.current) {
-        const x = e.clientX - lastPosition.current[0];
-        const y = e.clientY - lastPosition.current[1];
-        setPosition([position[0] + x, position[1] + y]);
-        lastPosition.current = [e.clientX, e.clientY];
-      }
-    };
-    const onMouseUp = () => {
-      lastPosition.current = null;
-    };
-    return (
-      <div
-        className="movable"
-        onMouseDown={onMouseDown}
-        onMouseMove={onMouseMove}
-        onMouseUp={onMouseUp}
-        style={{ left: position && position[0], top: position && position[1] }}
-      >
-        <Component {...props} ref={ref} />
-      </div>
-    );
-  }
-  return React.forwardRef(Component2);
+function App() {
+  return <Imperative />;
 }
 
 ReactDOM.render(<App />, document.getElementById("root"));
