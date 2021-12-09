@@ -2,72 +2,50 @@ import React, {
   useImperativeHandle,
   useRef,
   forwardRef,
-  useState,
+  useEffect,
+  createRef,
 } from "react";
 import ReactDOM from "react-dom";
 
-const Children = forwardRef((props, cref) => {
-  const [count, setCount] = useState(0);
-  const [num, setNum] = useState(0);
-  const inputRef = useRef(null);
-
-  useImperativeHandle(
-    cref,
-    () => ({
-      name: "子组件暴露给父组件的 name 属性",
-      focus: () => {
-        inputRef.current && inputRef.current.focus();
+const Button2 = forwardRef((props, ref) => {
+  const realButton = createRef(null);
+  const setRef = useImperativeHandle;
+  setRef(ref, () => {
+    return {
+      x: () => {
+        realButton.current.remove();
       },
-      count,
-    }),
-    [num]
-  );
-  /*
-先点击setCount按钮加到7，然后点击“获取子组件暴露给父组件的东西”按钮，
-此时打印出的count还是初使状态的0，只有点击了setNum按钮，（也就是说当num发生改变当时候），
-再次点击“获取子组件暴露给父组件的东西”按钮，此时打印出的count为改变后的7
-*/
-  return (
-    <>
-      <h3>count: {count}</h3>
-      <h3>num: {num}</h3>
-      <input type="text" ref={inputRef} />
-      <button
-        onClick={() => {
-          setCount(count + 1);
-        }}
-      >
-        setCount
-      </button>
-      <button
-        onClick={() => {
-          setNum(num + 1);
-        }}
-      >
-        setCount
-      </button>
-    </>
-  );
+    };
+  });
+  // useImperativeHandle(ref, () => {
+  //   return {
+  //     x: () => {
+  //       realButton.current.remove();
+  //     },
+  //   };
+  // });
+  return <button ref={realButton} {...props}></button>;
 });
 
-const Parent = () => {
-  const el = useRef(null);
+function App() {
+  const buttonRef = useRef(null);
+  useEffect(() => {
+    console.log(buttonRef.current);
+  });
   return (
-    <>
-      <Children ref={el} />
+    <div className="App">
+      <Button2 ref={buttonRef}>button</Button2>
       <button
+        className="close"
         onClick={() => {
-          console.log(el.current);
+          console.log(buttonRef);
+          buttonRef.current.x();
         }}
       >
-        获取子组件暴露给父组件的东西
+        X
       </button>
-    </>
+    </div>
   );
-};
-
-function App() {
-  return <Parent />;
 }
 
 ReactDOM.render(<App />, document.getElementById("root"));
